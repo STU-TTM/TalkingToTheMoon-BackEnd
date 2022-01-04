@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.k.bootweb.mapper.UserMapper">
+    <sql id="BASE_TABLE">
+        user
+    </sql>
+
+
+    <sql id="insertFields">
+        username, password,email,salt
+    </sql>
+
+    <sql id="selectFields">
+        uid, username, password, email,salt,type,status,head_portrait,psy_status,create_time
+    </sql>
+
+
+    <update id="updateUserInfo" parameterType="com.k.bootweb.pojo.dao.User">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        <set>
+            <if test="password != null">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="screenName != null">
+                screenName = #{screenName, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE uid = #{uid, jdbcType=INTEGER}
+    </update>
+
+    <select id="selectById" resultType="com.k.bootweb.pojo.dao.User">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        WHERE
+        uid = #{uid, jdbcType=INTEGER}
+    </select>
+
+    <select id="getUserInfoByCond" resultType="com.k.bootweb.pojo.dao.User">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+            <if test="username != null">
+                AND username = #{username, jdbcType=VARCHAR}
+            </if>
+            <if test="password != null">
+                AND password = #{password, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByName" resultType="com.k.bootweb.pojo.dao.User">
+        select <include refid="selectFields"></include>
+        from user
+        where username = #{username}
+    </select>
+
+    <select id="selectByEmail" resultType="com.k.bootweb.pojo.dao.User">
+        select <include refid="selectFields"></include>
+        from user
+        where email = #{email}
+    </select>
+
+    <insert id="insertUser" parameterType="com.k.bootweb.pojo.dao.User" keyProperty="uid">
+        insert into user (<include refid="insertFields"></include>)
+        values(#{username}, #{password}, #{email},#{salt})
+    </insert>
+
+    <update id="updatePassword" parameterType="com.k.bootweb.pojo.dao.User">
+        update user set password = #{password} where uid = #{uid}
+    </update>
+
+    <update id="updateUsername" parameterType="com.k.bootweb.pojo.dao.User">
+        update user set username = #{username} where uid = #{uid}
+    </update>
+
+    <update id="updatePsystatus" parameterType="com.k.bootweb.pojo.dao.User">
+        update user set psy_status = #{psystatus} where uid = #{uid}
+    </update>
+</mapper>
